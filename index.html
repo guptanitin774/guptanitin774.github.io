@@ -107,12 +107,51 @@
   .logo .mark::before{ top:-1px; left:-1px; border-width:1px 0 0 1px; }
   .logo .mark::after{ bottom:-1px; right:-1px; border-width:0 1px 1px 0; }
   .navlinks{ display:flex; gap:28px; font-family:var(--mono); font-size:13px; color:var(--muted); }
-  .navlinks a{ transition:color .15s ease; }
+  .navlinks a{ transition:color .15s ease; position:relative; padding-bottom:3px; }
   .navlinks a:hover{ color:var(--text); }
   .navlinks a span{ color:var(--muted-2); }
+  .navlinks a::after{
+    content:''; position:absolute; left:0; right:100%; bottom:-1px; height:1px;
+    background:var(--accent); transition:right .25s ease;
+  }
+  .navlinks a.active{ color:var(--accent); }
+  .navlinks a.active::after{ right:0; }
+  .navlinks a.active span{ color:var(--accent); opacity:0.6; }
+
+  .scroll-progress{
+    position:absolute; left:0; bottom:-1px; height:2px; width:0%;
+    background:var(--accent); transition:width .1s linear;
+  }
+
+  .hamburger{
+    display:none; flex-direction:column; justify-content:center; gap:5px;
+    width:34px; height:34px; border:1px solid var(--border); border-radius:4px;
+    background:transparent; cursor:pointer; align-items:center;
+  }
+  .hamburger span{ width:16px; height:1.5px; background:var(--muted); transition:all .2s ease; display:block; }
+  .hamburger[aria-expanded="true"] span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
+  .hamburger[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+  .hamburger[aria-expanded="true"] span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
+
+  .mobile-menu{
+    max-height:0; overflow:hidden; transition:max-height .25s ease;
+    border-top:1px solid transparent;
+  }
+  .mobile-menu.open{ max-height:280px; border-top:1px solid var(--border-soft); }
+  .mobile-menu a{
+    display:flex; justify-content:space-between; padding:14px 28px;
+    font-family:var(--mono); font-size:14px; color:var(--muted);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .mobile-menu a.active{ color:var(--accent); }
+  .mobile-menu a span{ color:var(--muted-2); }
 
   @media (max-width:640px){
     .navlinks{ display:none; }
+    .hamburger{ display:flex; }
+  }
+  @media (min-width:641px){
+    .mobile-menu{ display:none; }
   }
 
   /* ---------- reticle frame — the signature element ---------- */
@@ -197,7 +236,9 @@
   .terminal .body{ padding:18px 20px; }
   .terminal .line{ display:flex; justify-content:space-between; padding:6px 0; color:var(--muted); }
   .terminal .line b{ color:var(--text); font-weight:500; }
-  .terminal .line .val{ color:var(--accent); }
+  .terminal .line b.val{ color:var(--accent); }
+  .terminal .line b{ opacity:0; transition:opacity .4s ease; }
+  .terminal .line b.shown{ opacity:1; }
 
   /* ---------- SECTION SCAFFOLDING ---------- */
   section{ padding:76px 0; border-top:1px solid var(--border-soft); }
@@ -294,6 +335,66 @@
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
     font-family:var(--mono); font-size:12.5px; color:var(--muted-2);
   }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .55s ease, transform .55s ease; }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+  .reveal-stagger.in-view > *{ animation:none; }
+
+  /* ---------- cursor-tracking viewfinder (hero signature interaction) ---------- */
+  .hero{ position:relative; }
+  .cursor-reticle{
+    position:absolute; width:64px; height:64px; pointer-events:none;
+    border:1px solid var(--accent); border-radius:2px; opacity:0;
+    transition:opacity .3s ease, transform .12s ease-out;
+    z-index:1;
+  }
+  .cursor-reticle::before, .cursor-reticle::after{
+    content:''; position:absolute; background:var(--accent);
+  }
+  .cursor-reticle::before{ left:50%; top:-6px; width:1px; height:6px; transform:translateX(-50%); }
+  .cursor-reticle::after{ left:-6px; top:50%; width:6px; height:1px; transform:translateY(-50%); }
+  .cursor-reticle .tag{
+    position:absolute; top:calc(100% + 6px); left:0; white-space:nowrap;
+    font-family:var(--mono); font-size:10px; letter-spacing:0.08em; color:var(--accent);
+  }
+  .hero.tracking .cursor-reticle{ opacity:0.85; }
+
+  /* ---------- project filters ---------- */
+  .filter-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
+  .filter-btn{
+    font-family:var(--mono); font-size:12.5px; color:var(--muted);
+    border:1px solid var(--border); background:transparent; padding:8px 16px;
+    border-radius:20px; cursor:pointer; transition:all .18s ease;
+  }
+  .filter-btn:hover{ color:var(--text); border-color:var(--muted-2); }
+  .filter-btn.active{ color:var(--accent); border-color:rgba(94,234,212,0.45); background:var(--accent-dim); }
+  .proj{ transition:border-color .2s ease, transform .2s ease, opacity .25s ease, box-shadow .2s ease; }
+  .proj.hidden{ display:none; }
+  .proj:focus-within{ border-color:rgba(94,234,212,0.5); }
+
+  /* ---------- copy-to-clipboard ---------- */
+  .copy-row{ display:inline-flex; align-items:center; gap:10px; }
+  .copy-btn{
+    font-family:var(--mono); font-size:11px; color:var(--muted-2);
+    border:1px solid var(--border); background:transparent; border-radius:4px;
+    padding:4px 9px; cursor:pointer; transition:all .15s ease;
+  }
+  .copy-btn:hover{ color:var(--accent); border-color:rgba(94,234,212,0.4); }
+  .copy-btn.copied{ color:var(--accent); border-color:var(--accent); }
+
+  /* ---------- back to top ---------- */
+  .to-top{
+    position:fixed; right:24px; bottom:24px; z-index:60;
+    width:46px; height:46px; border-radius:50%;
+    background:var(--panel); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--accent); font-family:var(--mono); font-size:16px;
+    opacity:0; visibility:hidden; transform:translateY(10px);
+    transition:all .25s ease; cursor:pointer;
+  }
+  .to-top.show{ opacity:1; visibility:visible; transform:translateY(0); }
+  .to-top:hover{ border-color:var(--accent); }
 </style>
 </head>
 <body>
@@ -308,13 +409,25 @@
       <a href="#projects"><span>04·</span> Projects</a>
       <a href="#contact"><span>05·</span> Contact</a>
     </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about"><span>01</span> About</a>
+    <a href="#stack"><span>02</span> Stack</a>
+    <a href="#experience"><span>03</span> Experience</a>
+    <a href="#projects"><span>04</span> Projects</a>
+    <a href="#contact"><span>05</span> Contact</a>
+  </div>
+  <div class="scroll-progress" id="scrollProgress"></div>
 </header>
 
 <div class="wrap">
 
   <!-- HERO -->
-  <section class="hero" style="border-top:none;">
+  <section class="hero" id="hero" style="border-top:none;">
+    <div class="cursor-reticle" id="cursorReticle"><span class="tag">tracking</span></div>
     <div class="status-pill"><span class="blip"></span> Software Engineer @ Heuristics Informatics</div>
 
     <div class="reticle">
@@ -339,12 +452,12 @@
       <a href="#contact" class="btn btn-ghost">Get in Touch</a>
     </div>
 
-    <div class="terminal">
+    <div class="terminal" id="terminal">
       <div class="bar"><span></span><span></span><span></span><span class="label">~/nitin/status.log</span></div>
       <div class="body">
         <div class="line"><span>experience</span><b class="val">5+ yrs</b></div>
-        <div class="line"><span>platforms</span><b>Flutter · iOS (Swift/SwiftUI/UIKit)</b></div>
-        <div class="line"><span>ai_integration</span><b>on-device CV · real-time inference</b></div>
+        <div class="line"><span>platforms</span><b class="val">Mobile · Web · macOS (Flutter) · iOS (Native)</b></div>
+        <div class="line"><span>ai_integration</span><b class="val">on-device CV · real-time inference</b></div>
         <div class="line"><span>engagement_lift</span><b class="val">+20% (AI fitness features)</b></div>
         <div class="line"><span>ops_efficiency</span><b class="val">+30% (IoT remote monitoring)</b></div>
       </div>
@@ -353,11 +466,11 @@
 
   <!-- ABOUT -->
   <section id="about">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <div class="eyebrow"><span class="dot">01</span> · About</div>
       <h2>Ships across the stack — Dart, Swift, and the model in between.</h2>
     </div>
-    <div class="about-grid">
+    <div class="about-grid reveal">
       <div>
         <p>
           I'm a <strong>Mobile Developer</strong> based in Gurgaon, India, with 5+ years building
@@ -378,8 +491,8 @@
       </div>
       <div class="meta-list">
         <div class="row"><span>role</span><b>iOS &amp; Flutter Developer</b></div>
-        <div class="row"><span>cross_platform</span><b>Flutter · Dart</b></div>
-        <div class="row"><span>native</span><b>Swift · SwiftUI · UIKit</b></div>
+        <div class="row"><span>cross_platform</span><b>Mobile · Web · macOS (Flutter)</b></div>
+        <div class="row"><span>native</span><b>iOS — Swift · SwiftUI · UIKit</b></div>
         <div class="row"><span>ai_ml</span><b>Apple Vision · MLKit</b></div>
         <div class="row"><span>based_in</span><b>Gurgaon, IN</b></div>
         <div class="row"><span>current</span><b>Heuristics Informatics</b></div>
@@ -395,7 +508,7 @@
       <p>Flutter and native iOS as the two main lanes, with on-device AI as the recurring thread across both.</p>
     </div>
 
-    <div class="stack-grid">
+    <div class="stack-grid reveal">
       <div class="stack-card">
         <div class="cat">Flutter / Dart</div>
         <div class="chips">
@@ -466,12 +579,12 @@
 
   <!-- EXPERIENCE -->
   <section id="experience">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <div class="eyebrow"><span class="dot">03</span> · Career</div>
       <h2>Experience</h2>
     </div>
 
-    <div class="job">
+    <div class="job reveal">
       <div class="when">Dec 2022 — Present</div>
       <div>
         <h3>Software Engineer</h3>
@@ -483,7 +596,7 @@
       </div>
     </div>
 
-    <div class="job">
+    <div class="job reveal">
       <div class="when">Aug 2021 — Dec 2022</div>
       <div>
         <h3>Software Engineer</h3>
@@ -495,7 +608,7 @@
       </div>
     </div>
 
-    <div class="job">
+    <div class="job reveal">
       <div class="when">Mar 2021 — Aug 2021</div>
       <div>
         <h3>Software Engineer Trainee</h3>
@@ -510,14 +623,21 @@
 
   <!-- PROJECTS -->
   <section id="projects">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <div class="eyebrow"><span class="dot">04</span> · Selected Work</div>
       <h2>Key projects</h2>
       <p>Across fleet management, IoT, HR SaaS, and AI-powered fitness — Flutter and native iOS, shipped.</p>
     </div>
 
-    <div class="projects">
-      <div class="proj reticle"><span class="c2"></span>
+    <div class="filter-row" id="filterRow" role="group" aria-label="Filter projects by platform">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="flutter">Flutter</button>
+      <button class="filter-btn" data-filter="ios">iOS</button>
+      <button class="filter-btn" data-filter="ai">AI</button>
+    </div>
+
+    <div class="projects" id="projectsGrid">
+      <div class="proj reticle reveal" data-platform="flutter ios"><span class="c2"></span>
         <h3>Fleet Management System</h3>
         <p class="impact">End-to-end fleet platform across web and mobile — vehicle registration, sales, and accident reporting, with real-time map tracking and Firebase sync. <b>AI-assisted dev workflow.</b></p>
         <div class="tags">
@@ -528,7 +648,7 @@
         </div>
       </div>
 
-      <div class="proj reticle"><span class="c2"></span>
+      <div class="proj reticle reveal" data-platform="flutter"><span class="c2"></span>
         <h3>Flosenso — IoT Water Level Controller</h3>
         <p class="impact">Real-time pump control and alerts over BLE and MQTT, with offline-first storage and native platform channels. <b>+30% operational efficiency.</b></p>
         <div class="tags">
@@ -539,7 +659,7 @@
         </div>
       </div>
 
-      <div class="proj reticle"><span class="c2"></span>
+      <div class="proj reticle reveal" data-platform="ios"><span class="c2"></span>
         <h3>HRSS360 — HR Management SaaS</h3>
         <p class="impact">Employee management, payroll, and HR workflows with real-time sync across devices, built on MVVM and Combine with Keychain-backed credential storage.</p>
         <div class="tags">
@@ -550,7 +670,7 @@
         </div>
       </div>
 
-      <div class="proj reticle"><span class="c2"></span>
+      <div class="proj reticle reveal" data-platform="ios"><span class="c2"></span>
         <h3>Pixel Color — Color by Number</h3>
         <p class="impact">Interactive coloring app tuned for smooth animation and fast load times, with a Fastlane-driven CI/CD pipeline for App Store deployment.</p>
         <div class="tags">
@@ -560,7 +680,7 @@
         </div>
       </div>
 
-      <div class="proj reticle"><span class="c2"></span>
+      <div class="proj reticle reveal" data-platform="ios ai"><span class="c2"></span>
         <h3>Fitmania — AI Training &amp; Fitness App</h3>
         <p class="impact">Real-time rep counting via MLKit and Apple Vision, live video streaming, and workout analytics. <b>+20% user engagement.</b></p>
         <div class="tags">
@@ -579,9 +699,9 @@
       <div class="eyebrow"><span class="dot">·</span> Track Record</div>
       <h2>By the numbers</h2>
     </div>
-    <div class="numbers">
+    <div class="numbers reveal">
       <div class="num-card"><div class="n">5+</div><div class="l">years in production mobile</div></div>
-      <div class="num-card"><div class="n">2</div><div class="l">platforms — Flutter &amp; native iOS</div></div>
+      <div class="num-card"><div class="n">3</div><div class="l">platforms — Mobile, Web &amp; macOS</div></div>
       <div class="num-card"><div class="n">+20%</div><div class="l">engagement via AI fitness features</div></div>
       <div class="num-card"><div class="n">+30%</div><div class="l">efficiency via IoT automation</div></div>
     </div>
@@ -589,7 +709,7 @@
 
   <!-- EDUCATION / AWARDS -->
   <section>
-    <div class="split">
+    <div class="split reveal">
       <div>
         <h3 class="mini">Education</h3>
         <div class="edu-item">
@@ -619,14 +739,20 @@
 
   <!-- CONTACT -->
   <section id="contact">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <div class="eyebrow"><span class="dot">05</span> · Contact</div>
       <h2>Let's build something intelligent.</h2>
       <p>Open to conversations on Flutter, native iOS, and AI-powered mobile work.</p>
     </div>
-    <div class="contact-grid">
-      <a href="mailto:nitinguptaios07@gmail.com">nitinguptaios07@gmail.com</a>
-      <a href="tel:+918303991734">+91-8303991734</a>
+    <div class="contact-grid reveal">
+      <span class="copy-row">
+        <a href="mailto:nitinguptaios07@gmail.com">nitinguptaios07@gmail.com</a>
+        <button class="copy-btn" data-copy="nitinguptaios07@gmail.com">Copy</button>
+      </span>
+      <span class="copy-row">
+        <a href="tel:+918303991734">+91-8303991734</a>
+        <button class="copy-btn" data-copy="+918303991734">Copy</button>
+      </span>
       <a href="https://www.linkedin.com/in/nitinguptaios/" target="_blank" rel="noopener">LinkedIn</a>
       <a href="https://github.com/nitinguptaios" target="_blank" rel="noopener">GitHub</a>
     </div>
@@ -641,6 +767,147 @@
     <span>Gurgaon, India</span>
   </div>
 </footer>
+
+<button class="to-top" id="toTop" aria-label="Back to top">↑</button>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- mobile menu ---- */
+  var hamburger = document.getElementById('hamburger');
+  var mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', function(){
+    var open = mobileMenu.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mobileMenu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  /* ---- scroll progress bar ---- */
+  var progress = document.getElementById('scrollProgress');
+  function updateProgress(){
+    var h = document.documentElement;
+    var scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    progress.style.width = scrolled + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive:true });
+  updateProgress();
+
+  /* ---- scrollspy: highlight active nav link ---- */
+  var sections = ['about','stack','experience','projects','contact']
+    .map(function(id){ return document.getElementById(id); })
+    .filter(Boolean);
+  var deskLinks = document.querySelectorAll('.navlinks a');
+  var mobLinks = document.querySelectorAll('.mobile-menu a');
+
+  function setActive(id){
+    deskLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + id); });
+    mobLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + id); });
+  }
+
+  var spyObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting) setActive(entry.target.id);
+    });
+  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+  sections.forEach(function(s){ spyObserver.observe(s); });
+
+  /* ---- reveal on scroll ---- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if (reduceMotion) {
+    revealEls.forEach(function(el){ el.classList.add('in-view'); });
+  } else {
+    var revealObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(function(el){ revealObserver.observe(el); });
+  }
+
+  /* ---- terminal scan-in effect ---- */
+  var terminal = document.getElementById('terminal');
+  if (terminal){
+    var vals = terminal.querySelectorAll('.body b');
+    var termObserver = new IntersectionObserver(function(entries, obs){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          vals.forEach(function(v, i){
+            setTimeout(function(){ v.classList.add('shown'); }, reduceMotion ? 0 : i * 140);
+          });
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    termObserver.observe(terminal);
+  }
+
+  /* ---- cursor-tracking viewfinder in hero ---- */
+  var hero = document.getElementById('hero');
+  var reticle = document.getElementById('cursorReticle');
+  var canHover = window.matchMedia('(pointer: fine)').matches;
+  if (hero && reticle && canHover && !reduceMotion){
+    hero.addEventListener('mousemove', function(e){
+      var rect = hero.getBoundingClientRect();
+      reticle.style.left = (e.clientX - rect.left - 32) + 'px';
+      reticle.style.top = (e.clientY - rect.top - 32) + 'px';
+      hero.classList.add('tracking');
+    });
+    hero.addEventListener('mouseleave', function(){ hero.classList.remove('tracking'); });
+  }
+
+  /* ---- project platform filter ---- */
+  var filterRow = document.getElementById('filterRow');
+  var cards = document.querySelectorAll('#projectsGrid .proj');
+  if (filterRow){
+    filterRow.addEventListener('click', function(e){
+      var btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      filterRow.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var f = btn.getAttribute('data-filter');
+      cards.forEach(function(card){
+        var platforms = (card.getAttribute('data-platform') || '').split(' ');
+        var show = f === 'all' || platforms.indexOf(f) !== -1;
+        card.classList.toggle('hidden', !show);
+      });
+    });
+  }
+
+  /* ---- copy to clipboard ---- */
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.getAttribute('data-copy');
+      navigator.clipboard.writeText(text).then(function(){
+        var original = btn.textContent;
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(function(){
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 1600);
+      });
+    });
+  });
+
+  /* ---- back to top ---- */
+  var toTop = document.getElementById('toTop');
+  document.addEventListener('scroll', function(){
+    toTop.classList.toggle('show', window.scrollY > 600);
+  }, { passive:true });
+  toTop.addEventListener('click', function(){
+    window.scrollTo({ top:0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
+})();
+</script>
 
 </body>
 </html>
