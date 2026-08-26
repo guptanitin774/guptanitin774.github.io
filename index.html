@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nitin Gupta — iOS &amp; Flutter Developer</title>
+<meta name="description" content="Nitin Gupta — iOS & Flutter Developer building AI-powered mobile applications with on-device computer vision, Swift/SwiftUI/UIKit and Flutter/Dart.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0d10;
+    --panel:#11161b;
+    --panel-2:#161d24;
+    --border:#232b33;
+    --border-soft:#1a2129;
+    --text:#e6edf2;
+    --muted:#7c8894;
+    --muted-2:#586570;
+    --accent:#5eead4;
+    --accent-dim: rgba(94,234,212,0.14);
+    --flutter:#3fb8f0;
+    --flutter-dim: rgba(63,184,240,0.12);
+    --ios:#ff8a5c;
+    --ios-dim: rgba(255,138,92,0.12);
+    --radius: 3px;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'IBM Plex Sans', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(94,234,212,0.05), transparent 40%),
+      radial-gradient(circle at 85% 15%, rgba(255,138,92,0.04), transparent 35%);
+  }
+
+  a{ color:inherit; text-decoration:none; }
+
+  ::selection{ background:var(--accent-dim); color:var(--accent); }
+
+  :focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+  }
+
+  .wrap{
+    max-width:980px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  .eyebrow .dot{
+    color:var(--accent);
+  }
+
+  h1,h2,h3{ font-family:var(--display); font-weight:600; letter-spacing:-0.01em; }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(10,13,16,0.82);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+    max-width:980px; margin:0 auto;
+  }
+  .logo{
+    font-family:var(--mono);
+    font-size:14px; font-weight:600;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .mark{
+    width:22px; height:22px; border:1px solid var(--accent);
+    border-radius:2px; position:relative; flex-shrink:0;
+  }
+  .logo .mark::before, .logo .mark::after{
+    content:''; position:absolute; width:6px; height:6px;
+    border-color:var(--accent); border-style:solid;
+  }
+  .logo .mark::before{ top:-1px; left:-1px; border-width:1px 0 0 1px; }
+  .logo .mark::after{ bottom:-1px; right:-1px; border-width:0 1px 1px 0; }
+  .navlinks{ display:flex; gap:28px; font-family:var(--mono); font-size:13px; color:var(--muted); }
+  .navlinks a{ transition:color .15s ease; }
+  .navlinks a:hover{ color:var(--text); }
+  .navlinks a span{ color:var(--muted-2); }
+
+  @media (max-width:640px){
+    .navlinks{ display:none; }
+  }
+
+  /* ---------- reticle frame — the signature element ---------- */
+  .reticle{
+    position:relative;
+    padding:32px;
+  }
+  .reticle::before, .reticle::after,
+  .reticle .c2::before, .reticle .c2::after{
+    content:''; position:absolute; width:14px; height:14px;
+    border-color:var(--accent); border-style:solid; opacity:0.75;
+    transition: width .25s ease, height .25s ease;
+  }
+  .reticle::before{ top:0; left:0; border-width:1.5px 0 0 1.5px; }
+  .reticle::after{ top:0; right:0; border-width:1.5px 1.5px 0 0; }
+  .reticle .c2{ position:absolute; inset:0; pointer-events:none; }
+  .reticle .c2::before{ bottom:0; left:0; border-width:0 0 1.5px 1.5px; }
+  .reticle .c2::after{ bottom:0; right:0; border-width:0 1.5px 1.5px 0; }
+  .reticle:hover::before, .reticle:hover::after,
+  .reticle:hover .c2::before, .reticle:hover .c2::after{
+    width:20px; height:20px;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{ padding:88px 0 64px; }
+  .status-pill{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:12px; color:var(--muted);
+    border:1px solid var(--border); padding:6px 12px; border-radius:20px;
+    margin-bottom:28px;
+  }
+  .status-pill .blip{
+    width:6px; height:6px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 0 var(--accent-dim);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(94,234,212,0.5); }
+    70%{ box-shadow:0 0 0 7px rgba(94,234,212,0); }
+    100%{ box-shadow:0 0 0 0 rgba(94,234,212,0); }
+  }
+
+  .hero h1{
+    font-size:clamp(38px, 6vw, 64px);
+    line-height:1.05;
+    margin-bottom:22px;
+  }
+  .hero h1 .fname{ color:var(--text); }
+  .hero h1 .period{ color:var(--accent); }
+
+  .hero .lede{
+    max-width:560px; color:var(--muted); font-size:17px; margin-bottom:36px;
+  }
+  .hero .lede strong{ color:var(--text); font-weight:600; }
+
+  .cta-row{ display:flex; gap:14px; margin-bottom:56px; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--mono); font-size:13px; padding:12px 20px;
+    border-radius:var(--radius); border:1px solid var(--border);
+    transition:all .18s ease; display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary{ background:var(--accent); color:#06211d; border-color:var(--accent); font-weight:600; }
+  .btn-primary:hover{ background:#7ff2df; }
+  .btn-ghost{ color:var(--text); }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+
+  .terminal{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:6px;
+    overflow:hidden;
+    font-family:var(--mono);
+    font-size:13px;
+  }
+  .terminal .bar{
+    display:flex; align-items:center; gap:6px;
+    padding:10px 14px; border-bottom:1px solid var(--border-soft);
+    color:var(--muted-2);
+  }
+  .terminal .bar span{ width:9px; height:9px; border-radius:50%; background:#2a323a; }
+  .terminal .bar .label{ margin-left:8px; }
+  .terminal .body{ padding:18px 20px; }
+  .terminal .line{ display:flex; justify-content:space-between; padding:6px 0; color:var(--muted); }
+  .terminal .line b{ color:var(--text); font-weight:500; }
+  .terminal .line .val{ color:var(--accent); }
+
+  /* ---------- SECTION SCAFFOLDING ---------- */
+  section{ padding:76px 0; border-top:1px solid var(--border-soft); }
+  .sec-head{ margin-bottom:44px; max-width:620px; }
+  .sec-head .eyebrow{ margin-bottom:12px; }
+  .sec-head h2{ font-size:clamp(24px,3.4vw,32px); margin-bottom:12px; }
+  .sec-head p{ color:var(--muted); font-size:15px; }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{ display:grid; grid-template-columns:1.4fr 1fr; gap:48px; align-items:start; }
+  .about-grid p{ color:var(--muted); margin-bottom:16px; font-size:15.5px; }
+  .about-grid p strong{ color:var(--text); font-weight:600; }
+  .meta-list{ font-family:var(--mono); font-size:13px; }
+  .meta-list .row{
+    display:flex; justify-content:space-between; gap:12px;
+    padding:11px 0; border-bottom:1px solid var(--border-soft);
+    color:var(--muted-2);
+  }
+  .meta-list .row b{ color:var(--text); font-weight:500; text-align:right; }
+  @media (max-width:760px){ .about-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- STACK ---------- */
+  .stack-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+    gap:1px; background:var(--border-soft); border:1px solid var(--border-soft);
+  }
+  .stack-card{ background:var(--bg); padding:24px; }
+  .stack-card .cat{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:14px;
+  }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    font-family:var(--mono); font-size:12.5px; color:var(--muted);
+    border:1px solid var(--border); padding:5px 10px; border-radius:20px;
+  }
+  .chip.flutter{ color:var(--flutter); border-color:rgba(63,184,240,0.35); background:var(--flutter-dim); }
+  .chip.ios{ color:var(--ios); border-color:rgba(255,138,92,0.35); background:var(--ios-dim); }
+  .chip.ai{ color:var(--accent); border-color:rgba(94,234,212,0.35); background:var(--accent-dim); }
+
+  /* ---------- EXPERIENCE ---------- */
+  .job{ display:grid; grid-template-columns:200px 1fr; gap:24px; padding:28px 0; border-bottom:1px solid var(--border-soft); }
+  .job:first-of-type{ padding-top:0; }
+  .job:last-of-type{ border-bottom:none; }
+  .job .when{ font-family:var(--mono); font-size:12.5px; color:var(--muted-2); }
+  .job h3{ font-size:18px; margin-bottom:2px; }
+  .job .org{ color:var(--muted); font-size:14px; margin-bottom:14px; }
+  .job ul{ list-style:none; }
+  .job li{ position:relative; padding-left:18px; color:var(--muted); font-size:14.5px; margin-bottom:8px; }
+  .job li::before{ content:'›'; position:absolute; left:0; color:var(--accent); }
+  @media (max-width:640px){ .job{ grid-template-columns:1fr; gap:6px; } }
+
+  /* ---------- PROJECTS ---------- */
+  .projects{ display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:20px; }
+  .proj{
+    background:var(--panel); border:1px solid var(--border); border-radius:6px;
+    padding:26px; display:flex; flex-direction:column; gap:14px;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .proj:hover{ border-color:rgba(94,234,212,0.4); transform:translateY(-2px); }
+  .proj h3{ font-size:17px; }
+  .proj .impact{ color:var(--muted); font-size:14px; }
+  .proj .impact b{ color:var(--accent); font-weight:600; }
+  .proj .tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; }
+  .proj .tags .chip{ font-size:11.5px; padding:4px 9px; }
+
+  /* ---------- TRACK RECORD ---------- */
+  .numbers{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border-soft); border:1px solid var(--border-soft); }
+  .num-card{ background:var(--bg); padding:30px 20px; text-align:center; }
+  .num-card .n{ font-family:var(--display); font-size:34px; color:var(--accent); font-weight:700; }
+  .num-card .l{ font-family:var(--mono); font-size:12px; color:var(--muted); margin-top:6px; }
+  @media (max-width:700px){ .numbers{ grid-template-columns:repeat(2,1fr); } }
+
+  /* ---------- EDUCATION / AWARDS ---------- */
+  .split{ display:grid; grid-template-columns:1fr 1fr; gap:48px; }
+  .split h3.mini{ font-family:var(--mono); font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:18px; }
+  .edu-item, .award-item{ padding:14px 0; border-bottom:1px solid var(--border-soft); }
+  .edu-item:last-child, .award-item:last-child{ border-bottom:none; }
+  .edu-item .deg{ font-weight:600; font-size:15px; }
+  .edu-item .school{ color:var(--muted); font-size:13.5px; }
+  .edu-item .yr{ font-family:var(--mono); font-size:12px; color:var(--muted-2); }
+  .award-item .name{ font-weight:600; font-size:15px; color:var(--text); }
+  .award-item .desc{ color:var(--muted); font-size:13.5px; margin-top:4px; }
+  @media (max-width:700px){ .split{ grid-template-columns:1fr; gap:32px; } }
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{ display:flex; flex-wrap:wrap; gap:16px 40px; font-family:var(--mono); font-size:14.5px; margin-top:8px;}
+  .contact-grid a{ color:var(--text); border-bottom:1px solid var(--border); padding-bottom:2px; transition:color .15s ease, border-color .15s ease; }
+  .contact-grid a:hover{ color:var(--accent); border-color:var(--accent); }
+  .lang-line{ margin-top:32px; color:var(--muted-2); font-size:13px; font-family:var(--mono); }
+
+  footer{
+    border-top:1px solid var(--border-soft); padding:28px 0 40px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-family:var(--mono); font-size:12.5px; color:var(--muted-2);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo"><span class="mark"></span> NG</div>
+    <div class="navlinks">
+      <a href="#about"><span>01·</span> About</a>
+      <a href="#stack"><span>02·</span> Stack</a>
+      <a href="#experience"><span>03·</span> Experience</a>
+      <a href="#projects"><span>04·</span> Projects</a>
+      <a href="#contact"><span>05·</span> Contact</a>
+    </div>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" style="border-top:none;">
+    <div class="status-pill"><span class="blip"></span> Software Engineer @ Heuristics Informatics</div>
+
+    <div class="reticle">
+      <span class="c2"></span>
+      <h1><span class="fname">Nitin Gupta</span><span class="period">.</span></h1>
+    </div>
+
+    <p class="lede">
+      iOS &amp; Flutter developer building <strong>AI-powered mobile applications</strong> —
+      from native Swift/SwiftUI to cross-platform Flutter, with on-device computer vision
+      woven into real, shipped features.
+    </p>
+
+    <p class="lede">
+      5+ years across <strong>Flutter/Dart</strong> and <strong>Swift, SwiftUI, UIKit</strong>, integrating
+      on-device ML (Apple Vision, MLKit) for real-time inference, and using AI-assisted
+      workflows to move faster without cutting corners on architecture.
+    </p>
+
+    <div class="cta-row">
+      <a href="#projects" class="btn btn-primary">View Projects →</a>
+      <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+    </div>
+
+    <div class="terminal">
+      <div class="bar"><span></span><span></span><span></span><span class="label">~/nitin/status.log</span></div>
+      <div class="body">
+        <div class="line"><span>experience</span><b class="val">5+ yrs</b></div>
+        <div class="line"><span>platforms</span><b>Flutter · iOS (Swift/SwiftUI/UIKit)</b></div>
+        <div class="line"><span>ai_integration</span><b>on-device CV · real-time inference</b></div>
+        <div class="line"><span>engagement_lift</span><b class="val">+20% (AI fitness features)</b></div>
+        <div class="line"><span>ops_efficiency</span><b class="val">+30% (IoT remote monitoring)</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="dot">01</span> · About</div>
+      <h2>Ships across the stack — Dart, Swift, and the model in between.</h2>
+    </div>
+    <div class="about-grid">
+      <div>
+        <p>
+          I'm a <strong>Mobile Developer</strong> based in Gurgaon, India, with 5+ years building
+          scalable, high-performance applications across <strong>Flutter/Dart</strong> and native
+          <strong>iOS (Swift, SwiftUI, UIKit)</strong>. Most of my recent work sits at the intersection
+          of mobile engineering and applied AI — on-device computer vision for real-time rep
+          counting and health-metric detection, wired into production apps used every day.
+        </p>
+        <p>
+          I favor <strong>Clean Architecture</strong> and SOLID principles, work comfortably in both
+          Provider/Riverpod and MVVM/Combine worlds, and I'm hands-on with the release side too —
+          Fastlane, GitHub Actions, and getting builds through App Store and Play Store review.
+        </p>
+        <p>
+          Lately that's paired with <strong>AI-assisted development workflows</strong> to ship features
+          faster, and a career goal of growing into technical leadership while staying close to the code.
+        </p>
+      </div>
+      <div class="meta-list">
+        <div class="row"><span>role</span><b>iOS &amp; Flutter Developer</b></div>
+        <div class="row"><span>cross_platform</span><b>Flutter · Dart</b></div>
+        <div class="row"><span>native</span><b>Swift · SwiftUI · UIKit</b></div>
+        <div class="row"><span>ai_ml</span><b>Apple Vision · MLKit</b></div>
+        <div class="row"><span>based_in</span><b>Gurgaon, IN</b></div>
+        <div class="row"><span>current</span><b>Heuristics Informatics</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STACK -->
+  <section id="stack">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="dot">02</span> · Stack</div>
+      <h2>Core technical skills</h2>
+      <p>Flutter and native iOS as the two main lanes, with on-device AI as the recurring thread across both.</p>
+    </div>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div class="cat">Flutter / Dart</div>
+        <div class="chips">
+          <span class="chip flutter">Dart</span>
+          <span class="chip flutter">Provider</span>
+          <span class="chip flutter">Riverpod</span>
+          <span class="chip flutter">Dio / REST</span>
+          <span class="chip flutter">GraphQL</span>
+          <span class="chip flutter">Hive / SQLite</span>
+          <span class="chip flutter">Platform Channels</span>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="cat">Native iOS</div>
+        <div class="chips">
+          <span class="chip ios">Swift</span>
+          <span class="chip ios">SwiftUI</span>
+          <span class="chip ios">UIKit</span>
+          <span class="chip ios">MVVM</span>
+          <span class="chip ios">Combine</span>
+          <span class="chip ios">Swift Concurrency</span>
+          <span class="chip ios">Core Data</span>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="cat">AI / Gen AI</div>
+        <div class="chips">
+          <span class="chip ai">Apple Vision</span>
+          <span class="chip ai">MLKit</span>
+          <span class="chip ai">Real-time inference</span>
+          <span class="chip ai">AI-assisted dev workflows</span>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="cat">Architecture &amp; Practices</div>
+        <div class="chips">
+          <span class="chip">SOLID</span>
+          <span class="chip">Clean Architecture</span>
+          <span class="chip">Design Patterns</span>
+          <span class="chip">Performance Profiling</span>
+          <span class="chip">Agile / Scrum</span>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="cat">APIs &amp; Integrations</div>
+        <div class="chips">
+          <span class="chip">REST</span>
+          <span class="chip">GraphQL</span>
+          <span class="chip">OAuth / JWT</span>
+          <span class="chip">WebSockets</span>
+          <span class="chip">Apple Pay</span>
+          <span class="chip">Maps &amp; Location</span>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="cat">Tools &amp; Release</div>
+        <div class="chips">
+          <span class="chip">Xcode</span>
+          <span class="chip">Android Studio</span>
+          <span class="chip">Fastlane</span>
+          <span class="chip">GitHub Actions</span>
+          <span class="chip">Codemagic</span>
+          <span class="chip">Firebase Console</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="dot">03</span> · Career</div>
+      <h2>Experience</h2>
+    </div>
+
+    <div class="job">
+      <div class="when">Dec 2022 — Present</div>
+      <div>
+        <h3>Software Engineer</h3>
+        <div class="org">Heuristics Informatics Pvt Ltd, Gurgaon, IN</div>
+        <ul>
+          <li>Stay current on emerging Flutter, Dart, and mobile engineering practices through continuous learning.</li>
+          <li>Coordinate with product managers to define clear project scopes for cross-platform mobile features, aligned to business goals.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="job">
+      <div class="when">Aug 2021 — Dec 2022</div>
+      <div>
+        <h3>Software Engineer</h3>
+        <div class="org">IPHS Technologies LLP, Lucknow, IN</div>
+        <ul>
+          <li>Led UI and interactive feature development — smooth animations, rendering performance, and improved App Store ratings.</li>
+          <li>Built AI-powered real-time rep counting using MLKit and Apple Vision; integrated Firebase and live video streaming, lifting user engagement by 20%.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="job">
+      <div class="when">Mar 2021 — Aug 2021</div>
+      <div>
+        <h3>Software Engineer Trainee</h3>
+        <div class="org">Singsys Pte Ltd, Lucknow, IN</div>
+        <ul>
+          <li>Helped build a health-monitoring app measuring vital signs through the smartphone camera.</li>
+          <li>Worked with senior developers on code quality, debugging, and Git version control practices.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="dot">04</span> · Selected Work</div>
+      <h2>Key projects</h2>
+      <p>Across fleet management, IoT, HR SaaS, and AI-powered fitness — Flutter and native iOS, shipped.</p>
+    </div>
+
+    <div class="projects">
+      <div class="proj reticle"><span class="c2"></span>
+        <h3>Fleet Management System</h3>
+        <p class="impact">End-to-end fleet platform across web and mobile — vehicle registration, sales, and accident reporting, with real-time map tracking and Firebase sync. <b>AI-assisted dev workflow.</b></p>
+        <div class="tags">
+          <span class="chip flutter">Flutter</span>
+          <span class="chip ios">SwiftUI</span>
+          <span class="chip">Riverpod</span>
+          <span class="chip">Firebase</span>
+        </div>
+      </div>
+
+      <div class="proj reticle"><span class="c2"></span>
+        <h3>Flosenso — IoT Water Level Controller</h3>
+        <p class="impact">Real-time pump control and alerts over BLE and MQTT, with offline-first storage and native platform channels. <b>+30% operational efficiency.</b></p>
+        <div class="tags">
+          <span class="chip flutter">Flutter</span>
+          <span class="chip">BLE</span>
+          <span class="chip">MQTT</span>
+          <span class="chip">Hive / SQLite</span>
+        </div>
+      </div>
+
+      <div class="proj reticle"><span class="c2"></span>
+        <h3>HRSS360 — HR Management SaaS</h3>
+        <p class="impact">Employee management, payroll, and HR workflows with real-time sync across devices, built on MVVM and Combine with Keychain-backed credential storage.</p>
+        <div class="tags">
+          <span class="chip ios">Swift</span>
+          <span class="chip ios">UIKit</span>
+          <span class="chip">Combine</span>
+          <span class="chip">MVVM</span>
+        </div>
+      </div>
+
+      <div class="proj reticle"><span class="c2"></span>
+        <h3>Pixel Color — Color by Number</h3>
+        <p class="impact">Interactive coloring app tuned for smooth animation and fast load times, with a Fastlane-driven CI/CD pipeline for App Store deployment.</p>
+        <div class="tags">
+          <span class="chip ios">Swift</span>
+          <span class="chip">Fastlane</span>
+          <span class="chip">Performance</span>
+        </div>
+      </div>
+
+      <div class="proj reticle"><span class="c2"></span>
+        <h3>Fitmania — AI Training &amp; Fitness App</h3>
+        <p class="impact">Real-time rep counting via MLKit and Apple Vision, live video streaming, and workout analytics. <b>+20% user engagement.</b></p>
+        <div class="tags">
+          <span class="chip ai">Apple Vision</span>
+          <span class="chip ai">MLKit</span>
+          <span class="chip">Firebase</span>
+          <span class="chip">XCTest</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRACK RECORD -->
+  <section>
+    <div class="sec-head">
+      <div class="eyebrow"><span class="dot">·</span> Track Record</div>
+      <h2>By the numbers</h2>
+    </div>
+    <div class="numbers">
+      <div class="num-card"><div class="n">5+</div><div class="l">years in production mobile</div></div>
+      <div class="num-card"><div class="n">2</div><div class="l">platforms — Flutter &amp; native iOS</div></div>
+      <div class="num-card"><div class="n">+20%</div><div class="l">engagement via AI fitness features</div></div>
+      <div class="num-card"><div class="n">+30%</div><div class="l">efficiency via IoT automation</div></div>
+    </div>
+  </section>
+
+  <!-- EDUCATION / AWARDS -->
+  <section>
+    <div class="split">
+      <div>
+        <h3 class="mini">Education</h3>
+        <div class="edu-item">
+          <div class="deg">MCA</div>
+          <div class="school">Dr A.P.J. Abdul Kalam Technical University, Kanpur</div>
+          <div class="yr">2021</div>
+        </div>
+        <div class="edu-item">
+          <div class="deg">B.Sc.</div>
+          <div class="school">Chhatrapati Shahu Ji Maharaj University, Kanpur, UP</div>
+          <div class="yr">2018</div>
+        </div>
+      </div>
+      <div>
+        <h3 class="mini">Awards &amp; Achievements</h3>
+        <div class="award-item">
+          <div class="name">Rookie Rockstar Award — Jan 2023</div>
+          <div class="desc">Spearheaded R&amp;D on the Flosenso Flutter product, delivering all product requirements.</div>
+        </div>
+        <div class="award-item">
+          <div class="name">Employee of the Year — Nov 2020</div>
+          <div class="desc">Led rep-detection and squat-recognition work on the Fitmania project.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="sec-head">
+      <div class="eyebrow"><span class="dot">05</span> · Contact</div>
+      <h2>Let's build something intelligent.</h2>
+      <p>Open to conversations on Flutter, native iOS, and AI-powered mobile work.</p>
+    </div>
+    <div class="contact-grid">
+      <a href="mailto:nitinguptaios07@gmail.com">nitinguptaios07@gmail.com</a>
+      <a href="tel:+918303991734">+91-8303991734</a>
+      <a href="https://www.linkedin.com/in/nitinguptaios/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/nitinguptaios" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div class="lang-line">languages: Hindi (C2) · English (B1) &nbsp;|&nbsp; interests: cycling &amp; travelling</div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:10px;">
+    <span>© 2026 Nitin Gupta</span>
+    <span>Gurgaon, India</span>
+  </div>
+</footer>
+
+</body>
+</html>
